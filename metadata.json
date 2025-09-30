@@ -1,0 +1,7 @@
+{
+  "name": "Assistente de Voz para Webhook",
+  "description": "Um chat de voz interativo em tempo real que converte voz em texto, envia comandos para um webhook com ferramentas selecionadas e responde com voz e texto.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
