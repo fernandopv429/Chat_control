@@ -1,6 +1,6 @@
 import { Tool } from './types';
 
-export const WEBHOOK_URL = 'https://autowebhook.nexusdevhub.com/webhook/90a4b483-d0d9-459e-a97c-6ab11ef5190b';
+export const DEFAULT_WEBHOOK_URL = 'https://autowebhook.nexusdevhub.com/webhook/90a4b483-d0d9-459e-a97c-6ab11ef5190b';
 
 export const DEFAULT_TOOLS: Tool[] = [
   { id: 'google-drive', name: 'Google Drive' },
@@ -13,4 +13,5 @@ export const DEFAULT_TOOLS: Tool[] = [
   { id: 'trello', name: 'Trello' },
   { id: 'jira', name: 'Jira' },
   { id: 'slack', name: 'Slack' },
+  { id: 'resumo-de-conversa', name: 'Resumo de Conversa' },
 ];

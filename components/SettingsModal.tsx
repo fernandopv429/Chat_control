@@ -1,13 +1,16 @@
 
 
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Knowledge, UserInfo, Tool } from '../types';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  currentWebhookUrl: string;
   currentWakeWord: string;
   currentIsWakeWordRequired: boolean;
+  isSilentMode: boolean;
   isSystemMessageEnabled: boolean;
   currentSystemMessage: string;
   isKnowledgeEnabled: boolean;
@@ -15,8 +18,10 @@ interface SettingsModalProps {
   currentUserInfo: UserInfo;
   currentTools: Tool[];
   onSave: (settings: { 
+    newWebhookUrl: string;
     newWakeWord: string; 
     newIsWakeWordRequired: boolean;
+    newIsSilentMode: boolean;
     newIsSystemMessageEnabled: boolean; 
     newSystemMessage: string; 
     newIsKnowledgeEnabled: boolean;
@@ -33,8 +38,10 @@ const MAX_HISTORY_SIZE = 10;
 export const SettingsModal: React.FC<SettingsModalProps> = ({ 
   isOpen, 
   onClose, 
+  currentWebhookUrl,
   currentWakeWord, 
   currentIsWakeWordRequired,
+  isSilentMode,
   isSystemMessageEnabled,
   currentSystemMessage,
   isKnowledgeEnabled,
@@ -45,8 +52,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onSendSystemMessage,
   onSendKnowledge
 }) => {
+  const [webhookUrlInput, setWebhookUrlInput] = useState(currentWebhookUrl);
   const [wakeWordInput, setWakeWordInput] = useState(currentWakeWord);
   const [isWakeWordRequiredInput, setIsWakeWordRequiredInput] = useState(currentIsWakeWordRequired);
+  const [isSilentModeInput, setIsSilentModeInput] = useState(isSilentMode);
   const [systemMessageEnabled, setSystemMessageEnabled] = useState(isSystemMessageEnabled);
   const [systemMessageInput, setSystemMessageInput] = useState(currentSystemMessage);
   const [knowledgeEnabled, setKnowledgeEnabled] = useState(isKnowledgeEnabled);
@@ -62,8 +71,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
+      setWebhookUrlInput(currentWebhookUrl);
       setWakeWordInput(currentWakeWord);
       setIsWakeWordRequiredInput(currentIsWakeWordRequired);
+      setIsSilentModeInput(isSilentMode);
       setSystemMessageEnabled(isSystemMessageEnabled);
       setSystemMessageInput(currentSystemMessage);
       setKnowledgeEnabled(isKnowledgeEnabled);
@@ -83,14 +94,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     } else {
         setIsHistoryVisible(false); // Esconde o histórico quando o modal fecha
     }
-  }, [isOpen, currentWakeWord, currentIsWakeWordRequired, isSystemMessageEnabled, currentSystemMessage, isKnowledgeEnabled, currentKnowledge, currentUserInfo, currentTools]);
+  }, [isOpen, currentWebhookUrl, currentWakeWord, currentIsWakeWordRequired, isSilentMode, isSystemMessageEnabled, currentSystemMessage, isKnowledgeEnabled, currentKnowledge, currentUserInfo, currentTools]);
 
   if (!isOpen) {
     return null;
   }
 
   const handleSave = () => {
-    if (wakeWordInput.trim() || !isWakeWordRequiredInput) {
+    if ((wakeWordInput.trim() || !isWakeWordRequiredInput) && webhookUrlInput.trim()) {
       if (systemMessageInput.trim() && !history.includes(systemMessageInput.trim())) {
         const newHistory = [systemMessageInput.trim(), ...history];
         const limitedHistory = newHistory.slice(0, MAX_HISTORY_SIZE);
@@ -99,8 +110,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       }
 
       onSave({
+        newWebhookUrl: webhookUrlInput.trim(),
         newWakeWord: wakeWordInput.trim(),
         newIsWakeWordRequired: isWakeWordRequiredInput,
+        newIsSilentMode: isSilentModeInput,
         newIsSystemMessageEnabled: systemMessageEnabled,
         newSystemMessage: systemMessageInput,
         newIsKnowledgeEnabled: knowledgeEnabled,
@@ -223,6 +236,41 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 Iniciar comando com palavra de ativação
               </span>
           </label>
+          <label className="flex items-center space-x-3 cursor-pointer group mt-3">
+              <input
+                type="checkbox"
+                className="hidden"
+                checked={isSilentModeInput}
+                onChange={() => setIsSilentModeInput(!isSilentModeInput)}
+              />
+              <div className="w-6 h-6 border-2 border-brand-text-secondary rounded-md flex items-center justify-center transition-all duration-200 group-hover:border-brand-primary">
+                {isSilentModeInput && (
+                  <svg className="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+              <span className="text-brand-text-secondary group-hover:text-brand-text-primary transition-colors duration-200">
+                Modo Silencioso (Apenas Executar)
+              </span>
+          </label>
+           <p className="text-sm text-gray-500 pl-9 -mt-2">O assistente não dará respostas por voz, apenas executará os comandos.</p>
+        </div>
+
+        <hr className="border-gray-700" />
+        
+        <div className="flex flex-col gap-2">
+          <label htmlFor="webhookUrl" className="text-brand-text-secondary font-medium">
+            URL do Webhook
+          </label>
+          <input
+            id="webhookUrl"
+            type="url"
+            value={webhookUrlInput}
+            onChange={(e) => setWebhookUrlInput(e.target.value)}
+            className="bg-brand-secondary border border-gray-600 text-brand-text-primary rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+            placeholder="https://seu-webhook.com/api"
+          />
         </div>
 
         <hr className="border-gray-700" />
@@ -433,7 +481,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="flex justify-end mt-2">
           <button
             onClick={handleSave}
-            disabled={isWakeWordRequiredInput && !wakeWordInput.trim()}
+            disabled={(isWakeWordRequiredInput && !wakeWordInput.trim()) || !webhookUrlInput.trim()}
             className="bg-brand-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             Salvar

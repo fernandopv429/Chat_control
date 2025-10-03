@@ -1,8 +1,9 @@
 
-import { WEBHOOK_URL } from '../constants';
+
 import { Knowledge, UserInfo } from '../types';
 
 export const sendCommandToWebhook = async (
+  webhookUrl: string,
   command: string, 
   activeTools: string[], 
   opcoesAtivas: string[],
@@ -10,6 +11,9 @@ export const sendCommandToWebhook = async (
   conhecimento?: Knowledge,
   userInfo?: UserInfo
 ): Promise<any> => {
+  if (!webhookUrl) {
+    throw new Error("URL do Webhook não fornecida.");
+  }
   try {
     const payload: { 
       comando: string; 
@@ -34,7 +38,7 @@ export const sendCommandToWebhook = async (
       payload.userInfo = userInfo;
     }
 
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,6 +67,9 @@ export const sendCommandToWebhook = async (
 
   } catch (error) {
     console.error('Error sending command to webhook:', error);
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        throw new Error('Falha na comunicação com o webhook. Verifique se o servidor do webhook está online e se as configurações de CORS permitem requisições do seu localhost.');
+    }
     if (error instanceof Error) {
         // Re-lança o erro para ser tratado pelo chamador
         throw error;
