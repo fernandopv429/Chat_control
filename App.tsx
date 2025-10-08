@@ -333,7 +333,7 @@ const App: React.FC = () => {
       const systemInstruction = baseInstruction;
 
       sessionPromiseRef.current = aiRef.current.live.connect({
-        model: 'gemini-2.5-flash-native-audio-preview-09-2025',
+        model: 'gemini-2.5-flash-exp-native-audio-thinking-dialog',
         callbacks: {
           onopen: () => {
             console.log('Session opened.');
