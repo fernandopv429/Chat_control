@@ -1,20 +1,13 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+Visão Geral: O Nexus Chat Control é uma interface avançada de comando e controle por voz e texto, projetada para orquestrar agentes de IA e automações via webhooks dinâmicos.
 
-# Run and deploy your AI Studio app
+Funcionalidades de Destaque:
 
-This contains everything you need to run your app locally.
+Comando por Voz: Captura de áudio em tempo real com feedback visual de estado.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1gV8ZSJ1RunW65ZbK_IJMyh55fp4Q7yYR
+Seletor de Ferramentas: Controle granular sobre as capacidades ativas do agente.
 
-## Run Locally
+Monitor de Webhooks: Log detalhado para rastreamento de requisições enviadas.
 
-**Prerequisites:**  Node.js
+Stack Tecnológica: Construído com React 19, TypeScript, Vite, Tailwind CSS e Web Speech API.
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Estrutura: Organizado em componentes modulares (ex: MicButton, ChatHistory) e serviços de integração centralizados.
